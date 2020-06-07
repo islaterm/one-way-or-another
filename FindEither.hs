@@ -24,19 +24,15 @@ type Error = String
   Left "Multiple values for key 2"
 -}
 find :: (Eq k, Show k, Eq v) => k -> Assoc k v -> Either Error v
-find query table = if null table
-  then notFound
-  else foldr
-    (\t acc -> if fst t == query
-      then if isRight acc && (val acc /= snd t)
-        then Left ("Multiple values for key " ++ show (fst t))
-        else Right (snd t)
-      else acc
-    )
-    notFound
-    table
+find query = foldr
+  (\t acc -> if fst t == query
+    then if isRight acc && (val acc /= snd t)
+      then Left ("Multiple values for key " ++ show (fst t))
+      else Right (snd t)
+    else acc
+  )
+  (Left "Key not found")
  where
-  notFound = Left "Key not found"
   isRight (Right _) = True
   isRight _         = False
   val (Right x) = x
